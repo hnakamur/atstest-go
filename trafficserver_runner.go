@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
 	"os/exec"
 	"strconv"
 	"time"
@@ -35,12 +37,22 @@ func (r *TrafficserverRunner) Start() error {
 
 func (r *TrafficserverRunner) waitForStarted() error {
 	baseURL := fmt.Sprintf("http://localhost:%d", r.port)
-	c, err := NewClient(baseURL)
-	if err != nil {
-		return err
+
+	httpGet := func(baseURL string) error {
+		resp, err := http.Get(baseURL)
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+		if _, err := io.Copy(io.Discard, resp.Body); err != nil {
+			return err
+		}
+		return nil
 	}
+
+	var err error
 	for i := 0; i < 10; i++ {
-		_, err = c.Get("/")
+		err = httpGet(baseURL)
 		if err == nil {
 			return nil
 		}

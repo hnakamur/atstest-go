@@ -5,40 +5,48 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"testing"
 	"time"
 )
 
-type Client struct {
+type TestClient struct {
+	t          *testing.T
 	baseURL    *url.URL
 	httpClient *http.Client
 }
 
-func NewClient(baseURL string) (*Client, error) {
+func NewTestClient(t *testing.T, baseURL string) *TestClient {
+	t.Helper()
 	u, err := url.Parse(baseURL)
 	if err != nil {
-		return nil, err
+		t.Fatal(err)
 	}
-	return &Client{
+	return &TestClient{
+		t:       t,
 		baseURL: u,
 		httpClient: &http.Client{
 			Timeout: 5 * time.Second,
 		},
-	}, nil
+	}
 }
 
-func (c *Client) Get(urlPath string) (*http.Response, error) {
+func (c *TestClient) Get(urlPath string) *http.Response {
+	c.t.Helper()
 	u := c.baseURL.JoinPath(urlPath)
 	resp, err := c.httpClient.Get(u.String())
 	if err != nil {
-		return nil, err
+		c.t.Fatal(err)
 	}
 	if err := reloadResponseBody(resp); err != nil {
-		return nil, err
+		c.t.Fatal(err)
 	}
-	return resp, nil
+	return resp
 }
 
 func reloadResponseBody(resp *http.Response) error {
+	if resp.Body == nil {
+		return nil
+	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
