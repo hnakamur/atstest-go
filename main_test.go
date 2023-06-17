@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"flag"
 	"fmt"
@@ -20,10 +22,12 @@ func TestMain(m *testing.M) {
 }
 
 var baseURL string
+var debug bool
 
 func doTestMain(m *testing.M) (code int, err error) {
 	tsFilename := flag.String("ts-filename", "traffic_server", "trafficserver filename or full path")
 	tsPort := flag.Int("ts-port", 8080, "trafficserver port")
+	flag.BoolVar(&debug, "debug", false, "enable debug")
 	flag.Parse()
 
 	baseURL = fmt.Sprintf("http://localhost:%d", *tsPort)
@@ -71,4 +75,16 @@ func joinErrors(errs ...error) error {
 	default:
 		return errors.Join(errs...)
 	}
+}
+
+func newTestClient(t *testing.T) *TestClient {
+	return NewTestClient(t, baseURL, debug)
+}
+
+func NewScenarioID() string {
+	var b [16]byte
+	if _, err := rand.Read(b[:]); err != nil {
+		log.Fatal(err)
+	}
+	return hex.EncodeToString(b[:])
 }

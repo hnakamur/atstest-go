@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"strconv"
 )
 
 type OriginServer struct {
@@ -11,9 +13,30 @@ type OriginServer struct {
 
 func NewOriginServer(addr string) *OriginServer {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/status204", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Cache-Control", "s-maxage=30")
-		w.WriteHeader(http.StatusNoContent)
+	mux.HandleFunc("/status", func(w http.ResponseWriter, r *http.Request) {
+		status := http.StatusOK
+		if statusStr := r.FormValue("s"); statusStr != "" {
+			var err error
+			status, err = strconv.Atoi(statusStr)
+			if err != nil {
+				w.WriteHeader(http.StatusUnprocessableEntity)
+				fmt.Fprintf(w, "invalid status query parameter: %s", statusStr)
+				return
+			}
+		}
+
+		body := ""
+		if status >= http.StatusOK && status != http.StatusNoContent && status != http.StatusNotModified {
+			body = fmt.Sprintf("This is a response for requestURI=%s\n", r.RequestURI)
+			w.Header().Set("Content-Type", "text/plain")
+			w.Header().Set("Content-Length", strconv.Itoa(len(body)))
+		}
+
+		if sMaxAge := r.FormValue("s-maxage"); sMaxAge != "" {
+			w.Header().Set("Cache-Control", "s-maxage="+sMaxAge)
+		}
+		w.WriteHeader(status)
+		w.Write([]byte(body))
 	})
 	return &OriginServer{
 		httpServer: &http.Server{
