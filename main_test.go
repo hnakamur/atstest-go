@@ -27,12 +27,13 @@ var debug bool
 func doTestMain(m *testing.M) (code int, err error) {
 	tsFilename := flag.String("ts-filename", "traffic_server", "trafficserver filename or full path")
 	tsPort := flag.Int("ts-port", 8080, "trafficserver port")
+	origPort := flag.Int("orig-port", 8880, "origin server port")
 	flag.BoolVar(&debug, "debug", false, "enable debug")
 	flag.Parse()
 
 	baseURL = fmt.Sprintf("http://localhost:%d", *tsPort)
 
-	origServer := NewOriginServer(":8088")
+	origServer := NewOriginServer(fmt.Sprintf(":%d", *origPort))
 	origErrC := make(chan error)
 	go func() {
 		origErrC <- origServer.ListenAndServe()
@@ -46,7 +47,7 @@ func doTestMain(m *testing.M) (code int, err error) {
 		err = joinErrors(err, err2, err3)
 	}()
 
-	tsRunner := NewTrafficServerRunner(*tsFilename, *tsPort)
+	tsRunner := NewTrafficServerRunner(*tsFilename, *tsPort, *origPort)
 	if err := tsRunner.Start(); err != nil {
 		return 0, err
 	}

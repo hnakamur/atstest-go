@@ -11,15 +11,17 @@ import (
 )
 
 type TrafficserverRunner struct {
-	filename string
-	port     int
-	cmd      *exec.Cmd
+	filename   string
+	port       int
+	originPort int
+	cmd        *exec.Cmd
 }
 
-func NewTrafficServerRunner(filename string, port int) *TrafficserverRunner {
+func NewTrafficServerRunner(filename string, port, originPort int) *TrafficserverRunner {
 	return &TrafficserverRunner{
-		filename: filename,
-		port:     port,
+		filename:   filename,
+		port:       port,
+		originPort: originPort,
 	}
 }
 
