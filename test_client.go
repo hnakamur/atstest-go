@@ -1,35 +1,36 @@
-package main
+package atstest
 
 import (
 	"bytes"
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"testing"
-	"time"
 )
 
 type TestClient struct {
-	t          *testing.T
+	t          TBSub
 	debug      bool
 	baseURL    *url.URL
 	httpClient *http.Client
 }
 
-func NewTestClient(t *testing.T, baseURL string, debug bool) *TestClient {
+func NewTestClient(t TBSub, baseURL string, debug bool) *TestClient {
 	t.Helper()
 	u, err := url.Parse(baseURL)
 	if err != nil {
 		t.Fatal(err)
 	}
 	return &TestClient{
-		t:       t,
-		debug:   debug,
-		baseURL: u,
+		t:          t,
+		debug:      debug,
+		baseURL:    u,
 		httpClient: &http.Client{
-			Timeout: 5 * time.Second,
+			// Timeout: 5 * time.Second,
 		},
 	}
 }
@@ -88,4 +89,33 @@ func responseToString(resp *http.Response) string {
 	}
 	resp.Body = io.NopCloser(bytes.NewReader(b.Bytes()[bodyStart:]))
 	return b.String()
+}
+
+func NewScenarioID() string {
+	var b [16]byte
+	if _, err := rand.Read(b[:]); err != nil {
+		log.Fatal(err)
+	}
+	return hex.EncodeToString(b[:])
+}
+
+type TBSub interface {
+	Helper()
+	Logf(format string, args ...any)
+	Fatal(args ...any)
+}
+
+var _ TBSub = (*testing.T)(nil)
+var _ TBSub = (*LogTB)(nil)
+
+type LogTB struct{}
+
+func (t *LogTB) Helper() {}
+
+func (t *LogTB) Logf(format string, args ...any) {
+	log.Printf(format, args...)
+}
+
+func (t *LogTB) Fatal(args ...any) {
+	log.Fatal(args...)
 }

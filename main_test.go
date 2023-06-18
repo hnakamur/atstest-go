@@ -1,9 +1,7 @@
-package main
+package atstest
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"errors"
 	"flag"
 	"fmt"
@@ -11,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestMain(m *testing.M) {
@@ -25,15 +24,18 @@ var baseURL string
 var debug bool
 
 func doTestMain(m *testing.M) (code int, err error) {
+	tsRoot := flag.String("ts-root", "/etc/trafficserver", "trafficserver root directory")
 	tsFilename := flag.String("ts-filename", "traffic_server", "trafficserver filename or full path")
+	tsUser := flag.String("ts-user", "trafficserver", "user name to run traffic_server")
 	tsPort := flag.Int("ts-port", 8080, "trafficserver port")
-	origPort := flag.Int("orig-port", 8880, "origin server port")
+	originPort := flag.Int("origin-port", 8880, "origin server port")
+	waitBeforeTest := flag.Duration("wait-before-test", 0, "wait interval before test")
 	flag.BoolVar(&debug, "debug", false, "enable debug")
 	flag.Parse()
 
 	baseURL = fmt.Sprintf("http://localhost:%d", *tsPort)
 
-	origServer := NewOriginServer(fmt.Sprintf(":%d", *origPort))
+	origServer := NewOriginServer(fmt.Sprintf(":%d", *originPort))
 	origErrC := make(chan error)
 	go func() {
 		origErrC <- origServer.ListenAndServe()
@@ -47,7 +49,10 @@ func doTestMain(m *testing.M) (code int, err error) {
 		err = joinErrors(err, err2, err3)
 	}()
 
-	tsRunner := NewTrafficServerRunner(*tsFilename, *tsPort, *origPort)
+	tsRunner := NewTrafficServerRunner(*tsRoot, *tsFilename, *tsUser, *tsPort, *originPort)
+	if err := tsRunner.ModifyConfigFiles(); err != nil {
+		return 0, err
+	}
 	if err := tsRunner.Start(); err != nil {
 		return 0, err
 	}
@@ -55,6 +60,11 @@ func doTestMain(m *testing.M) (code int, err error) {
 		err2 := tsRunner.Stop()
 		err = joinErrors(err, err2)
 	}()
+
+	if *waitBeforeTest > 0 {
+		fmt.Fprintf(os.Stderr, "started origin and traffic_server, wait %s\n", *waitBeforeTest)
+		time.Sleep(*waitBeforeTest)
+	}
 
 	return m.Run(), nil
 }
@@ -80,12 +90,4 @@ func joinErrors(errs ...error) error {
 
 func newTestClient(t *testing.T) *TestClient {
 	return NewTestClient(t, baseURL, debug)
-}
-
-func NewScenarioID() string {
-	var b [16]byte
-	if _, err := rand.Read(b[:]); err != nil {
-		log.Fatal(err)
-	}
-	return hex.EncodeToString(b[:])
 }

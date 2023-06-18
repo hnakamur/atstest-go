@@ -1,0 +1,48 @@
+go: downloading gopkg.in/yaml.v3 v3.0.1
+=== RUN   TestStatus200NoContent
+    status200_test.go:23: TestClient.Get, url=http://localhost:8080/status?s=200&s-maxage=2&scenario=4c5e1d7fd971616b935e464beb03f363, resp=
+        HTTP/1.1 200 OK
+        Age: 0
+        Cache-Control: s-maxage=2
+        Connection: keep-alive
+        Content-Length: 101
+        Content-Type: text/plain
+        Date: Sat, 17 Jun 2023 23:11:22 GMT
+        Server: ATS/10.0.0
+        
+        This is a response for requestURI=/status?s=200&s-maxage=2&scenario=4c5e1d7fd971616b935e464beb03f363
+    status200_test.go:26: TestClient.Get, url=http://localhost:8080/status?s=200&s-maxage=2&scenario=4c5e1d7fd971616b935e464beb03f363, resp=
+        HTTP/1.1 200 OK
+        Age: 0
+        Cache-Control: s-maxage=2
+        Connection: keep-alive
+        Content-Length: 101
+        Content-Type: text/plain
+        Date: Sat, 17 Jun 2023 23:11:22 GMT
+        Server: ATS/10.0.0
+        
+        This is a response for requestURI=/status?s=200&s-maxage=2&scenario=4c5e1d7fd971616b935e464beb03f363
+--- PASS: TestStatus200NoContent (0.00s)
+=== RUN   TestStatus204NoContent
+    status204_test.go:23: TestClient.Get, url=http://localhost:8080/status?s=204&s-maxage=2&scenario=3bf7880f3c49e20a6fd26317751af995, resp=
+        HTTP/1.1 204 No Content
+        Age: 0
+        Cache-Control: s-maxage=2
+        Connection: keep-alive
+        Date: Sat, 17 Jun 2023 23:11:22 GMT
+        Server: ATS/10.0.0
+        
+    status204_test.go:26: TestClient.Get, url=http://localhost:8080/status?s=204&s-maxage=2&scenario=3bf7880f3c49e20a6fd26317751af995, resp=
+        HTTP/1.1 204 No Content
+        Age: 0
+        Cache-Control: s-maxage=2
+        Connection: keep-alive
+        Content-Length: 0
+        Date: Sat, 17 Jun 2023 23:11:22 GMT
+        Server: ATS/10.0.0
+        
+    status204_test.go:27: content-length must not exist in response with status 204
+--- FAIL: TestStatus204NoContent (0.00s)
+FAIL
+exit status 1
+FAIL	github.com/hnakamur/atstest	21.113s
