@@ -27,6 +27,6 @@ build_and_test_ats_master:
 	$(MAKE) build_and_test IMAGE=atsmaster GITHUB_REPO=https://github.com/apache/trafficserver GITHUB_BRANCH=master
 
 build_and_test_ats_master_fix:
-	$(MAKE) build_and_test IMAGE=atsmasterfix GITHUB_REPO=https://github.com/hnakamur/trafficserver GITHUB_BRANCH=dont_add_content_length_for_status_204_cache
+	$(MAKE) build_and_test IMAGE=atsmasterfix GITHUB_REPO=https://github.com/hnakamur/trafficserver GITHUB_BRANCH=dont_add_content_length_for_status_204_cache_2
 
 build_and_test_all: build_and_test_ats921 build_and_test_ats921fix build_and_test_ats_master build_and_test_ats_master_fix
