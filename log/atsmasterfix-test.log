@@ -1,45 +1,45 @@
 go: downloading gopkg.in/yaml.v3 v3.0.1
 === RUN   TestStatus200NoContent
-    status200_test.go:23: TestClient.Get, url=http://localhost:8080/status?s=200&s-maxage=2&scenario=e05777c8aaf52d60ad410adfa459244b, resp=
+    status200_test.go:23: TestClient.Get, url=http://localhost:8080/status?s=200&s-maxage=2&scenario=ce65a69d8944110b90f167f25e2e4bf4, resp=
         HTTP/1.1 200 OK
         Age: 0
         Cache-Control: s-maxage=2
         Connection: keep-alive
         Content-Length: 101
         Content-Type: text/plain
-        Date: Tue, 20 Jun 2023 23:20:45 GMT
+        Date: Wed, 21 Jun 2023 21:16:12 GMT
         Server: ATS/10.0.0
         
-        This is a response for requestURI=/status?s=200&s-maxage=2&scenario=e05777c8aaf52d60ad410adfa459244b
-    status200_test.go:26: TestClient.Get, url=http://localhost:8080/status?s=200&s-maxage=2&scenario=e05777c8aaf52d60ad410adfa459244b, resp=
+        This is a response for requestURI=/status?s=200&s-maxage=2&scenario=ce65a69d8944110b90f167f25e2e4bf4
+    status200_test.go:26: TestClient.Get, url=http://localhost:8080/status?s=200&s-maxage=2&scenario=ce65a69d8944110b90f167f25e2e4bf4, resp=
         HTTP/1.1 200 OK
         Age: 0
         Cache-Control: s-maxage=2
         Connection: keep-alive
         Content-Length: 101
         Content-Type: text/plain
-        Date: Tue, 20 Jun 2023 23:20:45 GMT
+        Date: Wed, 21 Jun 2023 21:16:12 GMT
         Server: ATS/10.0.0
         
-        This is a response for requestURI=/status?s=200&s-maxage=2&scenario=e05777c8aaf52d60ad410adfa459244b
+        This is a response for requestURI=/status?s=200&s-maxage=2&scenario=ce65a69d8944110b90f167f25e2e4bf4
 --- PASS: TestStatus200NoContent (0.00s)
 === RUN   TestStatus204NoContent
-    status204_test.go:23: TestClient.Get, url=http://localhost:8080/status?s=204&s-maxage=2&scenario=0f115fcfbae02bf0ed17f9cfb9b5fa34, resp=
+    status204_test.go:23: TestClient.Get, url=http://localhost:8080/status?s=204&s-maxage=2&scenario=e2bb3476a83637391b81f6d25095c4b9, resp=
         HTTP/1.1 204 No Content
         Age: 0
         Cache-Control: s-maxage=2
         Connection: keep-alive
-        Date: Tue, 20 Jun 2023 23:20:45 GMT
+        Date: Wed, 21 Jun 2023 21:16:12 GMT
         Server: ATS/10.0.0
         
-    status204_test.go:26: TestClient.Get, url=http://localhost:8080/status?s=204&s-maxage=2&scenario=0f115fcfbae02bf0ed17f9cfb9b5fa34, resp=
+    status204_test.go:26: TestClient.Get, url=http://localhost:8080/status?s=204&s-maxage=2&scenario=e2bb3476a83637391b81f6d25095c4b9, resp=
         HTTP/1.1 204 No Content
         Age: 0
         Cache-Control: s-maxage=2
         Connection: keep-alive
-        Date: Tue, 20 Jun 2023 23:20:45 GMT
+        Date: Wed, 21 Jun 2023 21:16:12 GMT
         Server: ATS/10.0.0
         
 --- PASS: TestStatus204NoContent (0.00s)
 PASS
-ok  	github.com/hnakamur/atstest	21.120s
+ok  	github.com/hnakamur/atstest	21.117s
